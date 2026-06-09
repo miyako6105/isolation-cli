@@ -36,6 +36,9 @@ class GameState:
     def is_bounds(self, r, c):
         """
         (r, c)が盤面の範囲内かどうかをチェックする
+        Args:
+            r (int): 行番号
+            c (int): 列番号
         """
         return (0 <= r < self.height) and (0 <= c < self.width)
     
@@ -46,6 +49,9 @@ class GameState:
         1. 盤面の範囲内であること
         2. 削除されていないこと
         3. 相手プレイヤーがいないこと
+        Args:
+            r (int): 行番号
+            c (int): 列番号
         """
         if not self.is_bounds(r, c):
             return False # 範囲外(条件1)
@@ -54,3 +60,60 @@ class GameState:
         if (r, c) == self.opponent_pos():
             return False # 相手プレイヤーがいる(条件3)
         return True # 全ての条件を満たす場合は移動可能
+    
+    def legal_moves(self):
+        """
+        今のプレイヤーの合法手を全列挙する
+        """
+        r0, c0 = self.current_pos() # 現在のプレイヤーの位置
+        moves = [] # 合法手のリスト
+
+        # 移動先の候補を収集
+        destinations = []
+        for dr, dc in DIRECTIONS:
+            r, c = r0 + dr, c0 + dc
+            if self.is_free(r, c):
+                destinations.append((r, c))
+        
+        # 各移動先に対して、削除するマスを全列挙
+        for dest in destinations:
+            for r in range(self.height):
+                for c in range(self.width):
+                    # 削除可能なのは移動先以外の空きマス
+                    if self.blocked[r][c]:
+                        continue # 既に削除されているマスはスキップ
+                    if (r, c) == dest:
+                        continue # 移動先は削除できないのでスキップ
+                    if (r, c) == self.opponent_pos():
+                        continue # 相手プレイヤーがいるマスは削除できないのでスキップ
+                    moves.append((dest, (r, c))) # (移動先, 削除するマス)のペアを追加
+        return moves
+    
+    def apply_move(self, move):
+        """
+        新しい手を適用した状態を返す（元の状態は変更しない）
+        Args:
+            move (tuple): (移動先, 削除するマス)のペア
+        """
+        dest, remove_cell = move
+        new_blocked = self.blocked.copy() # 新しいblocked配列を作成
+        new_blocked[remove_cell] = True # 削除するマスを更新
+
+        if self.turn == 1:
+            return replace(self, blocked=new_blocked, p1_pos=dest, turn=2) # プレイヤー1のターンからプレイヤー2のターンへ
+        else:
+            return replace(self, blocked=new_blocked, p2_pos=dest, turn=1) # プレイヤー2のターンからプレイヤー1のターンへ
+    
+    def is_terminal(self):
+        """
+        ゲームが終了しているかどうかをチェックする
+        """
+        return len(self.legal_moves()) == 0
+    
+    def winner(self):
+        """
+        終局時の勝者を返す
+        """
+        if not self.is_terminal():
+            return None # ゲームが終了していない場合は勝者なし
+        return 2 if self.turn == 1 else 1 # 現在のプレイヤーが合法手を持たない場合、相手プレイヤーが勝者
