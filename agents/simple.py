@@ -32,21 +32,23 @@ class GreedyAgent(Agent):
     def __init__(self, name=None, evaluation="mobility", seed=None):
         super().__init__(name)
         self._eval = get_evaluation_function(evaluation)   # 評価関数を差し替え可能に
-        self._eval_name = evaluation
+        self._eval_name = evaluation # 評価関数の名前を保存しておく（表示用）
         self._rng = random.Random(seed)           # 同点手のタイブレーク用
 
     def select_move(self, state):
         me = state.turn  # 今から打つのが自分。この視点を固定する。
         best_value = None
         best_moves = []
+        # 全合法手を試す
         for move in state.legal_moves():
-            nxt = state.apply_move(move)
+            nxt = state.apply_move(move) # move を打った直後の状態
             value = self._eval(nxt, player=me)    # 自分視点で評価
             if best_value is None or value > best_value:
+                # よりよい手で更新
                 best_value = value
                 best_moves = [move]
             elif value == best_value:
-                best_moves.append(move)           # 同点はためておく
+                best_moves.append(move) # 同点はためておく
         # 同点の手が複数あればランダムに1つ選ぶ（偏りを避ける）
         return self._rng.choice(best_moves)
 
