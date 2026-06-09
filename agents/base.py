@@ -1,4 +1,4 @@
-"""isolation.agents.base
+"""
 全プレイヤー（人間・ランダム・貪欲・将来のMinimax/MCTS/RL）が従う
 共通インターフェース
 """
@@ -6,8 +6,8 @@ from abc import ABC, abstractmethod
 
 class Agent(ABC):
     """
-    エージェントの抽象基底。
-
+    エージェントの抽象基底クラス
+    すべてのエージェントはこのクラスを継承し、select_move メソッドを実装する必要がある。
     """
 
     def __init__(self, name=None):
@@ -27,4 +27,5 @@ class Agent(ABC):
         ...
 
     def __repr__(self):
+        # デバッグやログで見やすいように、クラス名と名前を表示する
         return f"{self.__class__.__name__}(name={self.name!r})"
