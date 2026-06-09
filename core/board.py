@@ -33,7 +33,7 @@ class GameState:
         """
         return self.p2_pos if self.turn == 1 else self.p1_pos
     
-    def is_bounds(self, r, c):
+    def in_bounds(self, r, c):
         """
         (r, c)が盤面の範囲内かどうかをチェックする
         Args:
@@ -53,13 +53,27 @@ class GameState:
             r (int): 行番号
             c (int): 列番号
         """
-        if not self.is_bounds(r, c):
+        if not self.in_bounds(r, c):
             return False # 範囲外(条件1)
         if self.blocked[r][c]:
             return False # 削除されている(条件2)
         if (r, c) == self.opponent_pos():
             return False # 相手プレイヤーがいる(条件3)
         return True # 全ての条件を満たす場合は移動可能
+    
+    def legal_destinations(self):
+        """
+        今の手番プレイヤーが移動できるマスの一覧を返す。
+        削除のことは考えず、純粋に「八方向で行けるマス」だけを返す。
+        評価関数（動ける数）でも使うので独立した関数にしてある。
+        """
+        r0, c0 = self.current_pos()
+        dests = []
+        for dr, dc in DIRECTIONS:
+            nr, nc = r0 + dr, c0 + dc
+            if self.is_free(nr, nc):
+                dests.append((nr, nc))
+        return dests
     
     def legal_moves(self):
         """
@@ -117,3 +131,76 @@ class GameState:
         if not self.is_terminal():
             return None # ゲームが終了していない場合は勝者なし
         return 2 if self.turn == 1 else 1 # 現在のプレイヤーが合法手を持たない場合、相手プレイヤーが勝者
+    def _key(self):
+        """
+        状態の等価判定とハッシュに使うキーを生成する
+        """
+        return (
+            self.width, self.height,
+            self.blocked.tobytes(), # blocked配列をバイト列に変換してキーにする
+            self.p1_pos, self.p2_pos,
+            self.turn
+        )
+    
+    def __eq__(self, other):
+        """
+        状態の等価判定。盤面の状態が同じなら等しいとみなす。
+        """
+        if not isinstance(other, GameState):
+            return False
+        return self._key() == other._key()
+    
+    def __hash__(self):
+        """
+        状態のハッシュ値を返す。盤面の状態が同じなら同じハッシュ値になる。
+        """
+        return hash(self._key())
+
+# MARK: initial_state
+def initial_state(width: int, height: int, p1: tuple[int, int]=None, p2: tuple[int, int]=None, turn: int = 1):
+    """
+    初期状態を生成する関数
+    Args:
+        width (int): 盤面の幅
+        height (int): 盤面の高さ
+        p1 (tuple[int, int]): プレイヤー1の初期位置（optional, デフォルトは左上隅(0, 0)）
+        p2 (tuple[int, int]): プレイヤー2の初期位置（optional, デフォルトは右下隅(width-1, height-1)）
+        turn (int): 最初の手番（1または2）
+    """
+    if p1 is None:
+        p1 = (0, 0) # デフォルトは左上隅
+    if p2 is None:
+        p2 = (height - 1, width - 1) # デフォルトは右下隅
+    # 初期配置が適切かチェック
+    if not (0 <= p1[0] < height and 0 <= p1[1] < width):
+        raise ValueError("プレイヤー1の初期位置が盤面の範囲外です")
+    if not (0 <= p2[0] < height and 0 <= p2[1] < width):
+        raise ValueError("プレイヤー2の初期位置が盤面の範囲外です")
+    if p1 == p2:
+        raise ValueError("プレイヤー1とプレイヤー2の初期位置が同じです")
+    blocked = np.zeros((height, width), dtype=bool) # 全てのマスが空き（False）で初期化
+    return GameState(width, height, blocked, p1, p2, turn)
+
+# MARK: render
+def render(state: GameState):
+    """
+    状態をテキストで表示する関数
+        - P1の位置は '1'
+        - P2の位置は '2'
+        - 削除されたマスは '#'
+        - 空きマスは '.'
+    """
+    rows = []
+    for r in range(state.height):
+        cells = []
+        for c in range(state.width):
+            if (r, c) == state.p1_pos:
+                cells.append("1")
+            elif (r, c) == state.p2_pos:
+                cells.append("2")
+            elif state.blocked[r][c]:
+                cells.append("#")
+            else:
+                cells.append(".")
+        rows.append("".join(cells))
+    return "\n".join(rows)
