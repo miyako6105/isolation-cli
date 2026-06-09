@@ -191,8 +191,11 @@ def render(state: GameState):
         - 空きマスは '.'
     """
     rows = []
+    # 行番号を先頭に追加して、マスの内容を描画
+    row_numbers = [f"{c}" for c in range(state.width)] # 列番号を上部に追加
+    rows.append("".join(["  "] + row_numbers))
     for r in range(state.height):
-        cells = []
+        cells = [f"{r} "] # 行番号を先頭に追加
         for c in range(state.width):
             if (r, c) == state.p1_pos:
                 cells.append("1")
@@ -201,6 +204,6 @@ def render(state: GameState):
             elif state.blocked[r][c]:
                 cells.append("#")
             else:
-                cells.append(".")
+                cells.append("*")
         rows.append("".join(cells))
     return "\n".join(rows)
