@@ -16,6 +16,11 @@ isolation/
 │   └── tournament.py  # エージェント同士の総当たり
 └── tests/
 ```
+## ライブラリのインストール
+requirements.txt に必要ならイブラリを追加している。以下、もしくはそれに類するコマンドでインストールする。
+```
+pip install -r requirements.txt
+```
 ## 遊び方
 本ディレクトリで以下を実行
 ```
