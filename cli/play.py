@@ -10,12 +10,12 @@ def build_cpu(kind: str, seed=None):
     """
     CPUエージェントを生成する関数
     Args:
-        kind (str): エージェントの種類 ("random" または "greedy")
+        kind (str): エージェントの種類 ("random" または "greedy-*")
         seed (int, optional): 乱数シード (RandomAgentの場合)
     """
     if kind == "random":
         return RandomAgent(name="CPU-Random", seed=seed)
-    elif kind == "greedy":
+    elif kind.startswith("greedy-"):
         eval_fn = kind.split("-", 1)[1]
         return GreedyAgent(name=f"CPU-Greedy-{eval_fn}", evaluation=eval_fn, seed=seed)
     else:
