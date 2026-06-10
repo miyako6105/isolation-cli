@@ -208,6 +208,7 @@ def run_tournament(names=None, n_games=20, width=5, height=5,
 
     # 全ペア(順不同の組み合わせ)を戦わせる
     for a, b in itertools.combinations(names, 2):
+        print(f"{a} vs {b} ...")
         make_a = AGENT_REGISTRY[a]
         make_b = AGENT_REGISTRY[b]
         m = run_match(make_a, make_b, n_games=n_games,
