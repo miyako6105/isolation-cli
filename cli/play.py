@@ -6,6 +6,7 @@ from agents.human import HumanAgent
 from agents.simple import RandomAgent, GreedyAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.alphabeta_agent import AlphaBetaAgent
+from agents.iterative_agent import IterativeDeepeningAgent
 
 # MARK: build CPU
 def build_cpu(kind: str, seed=None):
@@ -26,6 +27,9 @@ def build_cpu(kind: str, seed=None):
     elif kind.startswith("alphabeta-"): # アルファベータエージェント
         eval_fn = kind.split("-", 1)[1]
         return AlphaBetaAgent(name=f"CPU-AlphaBeta-{eval_fn}", depth=2, evaluation=eval_fn, seed=seed)
+    elif kind.startswith("iterative-"): # 反復深化エージェント
+        eval_fn = kind.split("-", 1)[1]
+        return IterativeDeepeningAgent(name=f"CPU-Iterative-{eval_fn}", time_limit=1.0, evaluation=eval_fn, seed=seed)
     else:
         raise ValueError(f"不明なエージェントの種類: {kind}")
     
@@ -33,9 +37,12 @@ def build_cpu(kind: str, seed=None):
 # MARK: CPU_CHOICES
 # CPUエージェントの選択肢。コマンドライン引数や対話的な選択で使用する。
 # 随時追加していくことができるように、文字列で指定する形式にしている。
-CPU_CHOICES = ["random", "greedy-mobility", "greedy-reachable", "greedy-voronoi", # 貪欲エージェントの選択肢
-               "minimax-mobility", "minimax-reachable", "minimax-voronoi", # ミニマックスエージェントの選択肢
-               "alphabeta-mobility", "alphabeta-reachable", "alphabeta-voronoi"] # アルファベータエージェントの選択肢
+CPU_CHOICES = [
+    "random", "greedy-mobility", "greedy-reachable", "greedy-voronoi", # 貪欲エージェントの選択肢
+    "minimax-mobility", "minimax-reachable", "minimax-voronoi", # ミニマックスエージェントの選択肢
+    "alphabeta-mobility", "alphabeta-reachable", "alphabeta-voronoi",# アルファベータエージェントの選択肢
+    "iterative-mobility", "iterative-reachable", "iterative-voronoi" # 反復深化エージェントの選択肢
+] 
 
 
 # MARK: prompt_choice
