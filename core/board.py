@@ -193,9 +193,9 @@ def render(state: GameState):
     rows = []
     # 列番号を先頭に追加して、マスの内容を描画
     row_numbers = [f"{c} " for c in range(state.width)] # 列番号を上部に追加
-    rows.append("".join(["  "] + row_numbers))
+    rows.append("".join(["   "] + row_numbers))
     for r in range(state.height):
-        cells = [f"{r}"] # 行番号を先頭に追加
+        cells = [f"{r:2d}"] # 行番号を先頭に追加
         for c in range(state.width):
             if (r, c) == state.p1_pos:
                 cells.append("1")
