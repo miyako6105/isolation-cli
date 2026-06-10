@@ -5,17 +5,19 @@
 ```
 isolation/
 ├── core/
-│   ├── board.py # 盤面の状態とルール
-|   ├── evaluation.py # 盤面評価の関数
-│   └── game.py  # ゲーム進行の制御
+│   ├── board.py                # 盤面の状態とルール
+|   ├── evaluation.py           # 盤面評価の関数
+│   └── game.py                 # ゲーム進行の制御
 ├── agents/
-│   ├── base.py # 全エージェントが従う抽象基底クラス
-|   ├── simple.py # 単純な評価によるエージェント
-│   └── human.py # 人間(player)
+│   ├── base.py                 # 全エージェントが従う抽象基底クラス
+|   ├── simple.py               # 単純な評価によるエージェント
+|   ├── search_minimax.py       # MiniMax法の探索処理
+|   ├── minimax_agent.py        # MiniMax法によるエージェント
+│   └── human.py                # 人間(player)
 ├── cli/
-│   └── play.py # CLIアプリ本体
+│   └── play.py                 # CLIアプリ本体
 ├── eval/
-│   └── tournament.py  # エージェント同士の総当たり
+│   └── tournament.py           # エージェント同士の総当たり
 └── tests/
 ```
 ## ライブラリのインストール
@@ -50,3 +52,4 @@ python -m cli.play
 - greedy-mobility（1手で移動可能なマスの数差を評価値とする）
 - greedy-reachable（現時点のマスから到達可能な全てのマスの数の差を評価値とする）
 - greedy-voronoi（ボロノイ分割で近いマスの数の差を評価値とする）
+- minimax-*（minimax法による探索）
