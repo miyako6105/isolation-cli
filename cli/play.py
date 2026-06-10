@@ -4,6 +4,7 @@ from core.game import play_game
 from core.board import GameState
 from agents.human import HumanAgent
 from agents.simple import RandomAgent, GreedyAgent
+from agents.minimax_agent import MinimaxAgent
 
 # MARK: build CPU
 def build_cpu(kind: str, seed=None):
@@ -13,16 +14,20 @@ def build_cpu(kind: str, seed=None):
         kind (str): エージェントの種類 ("random" または "greedy-*")
         seed (int, optional): 乱数シード (RandomAgentの場合)
     """
-    if kind == "random":
+    if kind == "random": # ランダムエージェント
         return RandomAgent(name="CPU-Random", seed=seed)
-    elif kind.startswith("greedy-"):
+    elif kind.startswith("greedy-"): # 貪欲エージェント
         eval_fn = kind.split("-", 1)[1]
         return GreedyAgent(name=f"CPU-Greedy-{eval_fn}", evaluation=eval_fn, seed=seed)
+    elif kind.startswith("minimax-"): # ミニマックスエージェント
+        eval_fn = kind.split("-", 1)[1]
+        return MinimaxAgent(name=f"CPU-Minimax-{eval_fn}", depth=2, evaluation=eval_fn, seed=seed)
     else:
         raise ValueError(f"不明なエージェントの種類: {kind}")
     
 
-CPU_CHOICES = ["random", "greedy-mobility", "greedy-reachable", "greedy-voronoi"]
+CPU_CHOICES = ["random", "greedy-mobility", "greedy-reachable", "greedy-voronoi",
+               "minimax-mobility", "minimax-reachable", "minimax-voronoi"]
 
 # MARK: prompt_choice
 def prompt_choice(prompt, choices):
