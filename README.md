@@ -15,6 +15,8 @@ isolation-cli/
 |   ├── minimax_agent.py        # MiniMax法によるエージェント
 |   ├── search_alphabeta.py     # αβ探索の処理
 |   ├── alphabeta_agent.py      # αβ探索によるエージェント
+|   ├── search_iterative.py     # 反復深化による評価スクリプト
+|   ├── iterative_agent.py      # 反復深化によるエージェント
 │   └── human.py                # 人間(player)
 ├── cli/
 │   └── play.py                 # CLIアプリ本体
