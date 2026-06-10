@@ -144,9 +144,9 @@ def voronoi_diff(state, player):
             cell = (r, c)
             if cell == me or cell == opp: # プレイヤーのいるマスはスキップ（距離0で両者同じなので）
                 continue
-            d_me = my_dist.get(cell, float("inf")) # 到達できないマスは距離無限大とみなす
-            d_opp = opp_dist.get(cell, float("inf"))
-            if d_me is float("inf") and d_opp is float("inf"):
+            d_me = my_dist.get(cell, None) # 到達できないマスは距離無限大とみなす
+            d_opp = opp_dist.get(cell, None)
+            if d_me is None and d_opp is None:
                 continue # 両者とも到達できないマスはスキップ
             if d_me is None:
                 score -= 1 # 相手だけが到達可能なマスは相手の得点
@@ -160,11 +160,13 @@ def voronoi_diff(state, player):
     return score
 
 # MARK: registry
+# 評価関数の名前と関数オブジェクトの対応を辞書で管理する
 EVALUATION_FUNCTIONS = {
     "mobility": mobility_diff,
     "reachable": reachable_diff,
     "voronoi": voronoi_diff,
 }
+
 # MARK: get_evaluation_function
 def get_evaluation_function(name):
     """
