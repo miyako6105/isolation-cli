@@ -1,9 +1,9 @@
 # Isolation CLI
 ボードゲーム「Isolation」をコマンドライン上で遊べるプログラムです。
-最終的には強いAgentを作り、それらで天下一武道会ができたら嬉しいです。
+最終的には強いAgentを作り、それらで天下一武道会がしたいです。
 ## ディレクトリ構成
 ```
-isolation/
+isolation-cli/
 ├── core/
 │   ├── board.py                # 盤面の状態とルール
 |   ├── evaluation.py           # 盤面評価の関数
@@ -13,6 +13,8 @@ isolation/
 |   ├── simple.py               # 単純な評価によるエージェント
 |   ├── search_minimax.py       # MiniMax法の探索処理
 |   ├── minimax_agent.py        # MiniMax法によるエージェント
+|   ├── search_alphabeta.py     # αβ探索の処理
+|   ├── alphabeta_agent.py      # αβ探索によるエージェント
 │   └── human.py                # 人間(player)
 ├── cli/
 │   └── play.py                 # CLIアプリ本体
