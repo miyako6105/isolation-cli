@@ -23,7 +23,6 @@ def _terminal_value(state, root_player, depth):
         return WIN + depth
     else:
         # 自分の負け。残り深さが大きい=早い負けなので価値を下げる。
-        # (遅い負け=depthが小さい方が-WINに近く、まだマシ)
         return -WIN - depth
 
 # MARK: minimax_value
@@ -91,6 +90,8 @@ def minimax_best_move(state, depth, evaluate, rng=None):
         elif val == best_value:
             best_moves.append(move)
 
+    # best_moves が複数ある場合は rng でランダムに選ぶ
+    # そうでなければ最初の1つを返す
     if rng is not None and len(best_moves) > 1:
         return rng.choice(best_moves), best_value
     return best_moves[0], best_value
