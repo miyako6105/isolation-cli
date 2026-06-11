@@ -7,6 +7,7 @@ from agents.simple import RandomAgent, GreedyAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.alphabeta_agent import AlphaBetaAgent
 from agents.iterative_agent import IterativeDeepeningAgent
+from agents.search_mcts import random_playout, make_greedy_playout, make_epsilon_greedy_playout
 from agents.mcts_agent import MCTSAgent
 
 # MARK: CPU_CHOICES
@@ -17,7 +18,10 @@ CPU_CHOICES = [
     "minimax-mobility", "minimax-reachable", "minimax-voronoi", # ミニマックスエージェントの選択肢
     "alphabeta-mobility", "alphabeta-reachable", "alphabeta-voronoi",# アルファベータエージェントの選択肢
     "iterative-mobility", "iterative-reachable", "iterative-voronoi", # 反復深化エージェントの選択肢
-    "mcts" # MCTSエージェント
+    "mcts-random", # MCTSエージェント
+    "mcts-greedy-mobility", "mcts-greedy-reachable", "mcts-greedy-voronoi", # MCTSエージェントの貪欲プレイアウト選択肢
+    "mcts-epsilon-greedy-mobility", "mcts-epsilon-greedy-reachable", "mcts-epsilon-greedy-voronoi", # MCTSエージェントのε-貪欲プレイアウト選択肢
+
 ] 
 
 # MARK: build CPU
@@ -42,8 +46,14 @@ def build_cpu(kind: str, seed=None):
     elif kind.startswith("iterative-"): # 反復深化エージェント
         eval_fn = kind.split("-", 1)[1]
         return IterativeDeepeningAgent(name=f"CPU-Iterative-{eval_fn}", time_limit=1.0, evaluation=eval_fn, seed=seed)
-    elif kind == "mcts": # MCTSエージェント
-        return MCTSAgent(name="CPU-MCTS", time_limit=1.0, seed=seed)
+    elif kind == "mcts-random": # MCTSエージェント
+        return MCTSAgent(name="CPU-MCTS-Random", time_limit=1.0, playout=random_playout, seed=seed)
+    elif kind.startswith("mcts-greedy-"):
+        eval_fn = kind.split("-", 2)[2]
+        return MCTSAgent(name=f"CPU-MCTS-Greedy-{eval_fn}", time_limit=1.0, playout=make_greedy_playout(eval_fn), seed=seed)
+    elif kind.startswith("mcts-epsilon-greedy-"):
+        eval_fn = kind.split("-", 3)[3]
+        return MCTSAgent(name=f"CPU-MCTS-Epsilon-Greedy-{eval_fn}", time_limit=1.0, playout=make_epsilon_greedy_playout(eval_fn, epsilon=0.3), seed=seed)
     else:
         raise ValueError(f"不明なエージェントの種類: {kind}")
 

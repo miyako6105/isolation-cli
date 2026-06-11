@@ -60,22 +60,6 @@ class _Node:
         return parent_winrate + exploration
 
 
-def random_playout(state, rng, max_steps=1000):
-    """
-    state から終局までランダムに打ち、勝者(1 or 2)を返す
-    """
-    s = state
-    steps = 0
-    while not s.is_terminal() and steps < max_steps:
-        move = rng.choice(s.legal_moves())
-        s = s.apply_move(move)
-        steps += 1
-    if s.is_terminal():
-        return s.winner()
-    # 上限到達(ほぼ起きない)。今動けない側を負けとする。
-    return 2 if s.turn == 1 else 1
-
-
 def _select(node, c):
     """
     UCB1 に従い、展開可能 or 終局のノードまで降りる(選択ステップ)
@@ -108,6 +92,89 @@ def _backpropagate(node, winner):
         if node.to_play == winner:
             node.wins += 1.0
         node = node.parent
+
+# MARK: random_playout
+def random_playout(state, rng, max_steps=1000):
+    """
+    state から終局までランダムに打ち、勝者(1 or 2)を返す
+    """
+    s = state
+    steps = 0
+    while not s.is_terminal() and steps < max_steps:
+        move = rng.choice(s.legal_moves())
+        s = s.apply_move(move)
+        steps += 1
+    if s.is_terminal():
+        return s.winner()
+    # 上限到達(ほぼ起きない)。今動けない側を負けとする。
+    return 2 if s.turn == 1 else 1
+
+# MARK: make_greedy_playout
+def make_greedy_playout(evaluation="mobility"):
+    """
+    貪欲プレイアウトを生成する。
+    """
+    from core.evaluation import get_evaluation_function
+    evaluate = get_evaluation_function(evaluation)
+
+    def playout(state, rng, max_steps=1000):
+        s = state
+        steps = 0
+        while not s.is_terminal() and steps < max_steps:
+            me = s.turn
+            best_val = None
+            best_moves = []
+            for move in s.legal_moves():
+                val = evaluate(s.apply_move(move), me)
+                if best_val is None or val > best_val:
+                    best_val = val
+                    best_moves = [move]
+                elif val == best_val:
+                    best_moves.append(move)
+            s = s.apply_move(rng.choice(best_moves))
+            steps += 1
+        if s.is_terminal():
+            return s.winner()
+        return 2 if s.turn == 1 else 1
+
+    return playout
+
+# MARK: make_epsilon_greedy_playout
+def make_epsilon_greedy_playout(evaluation="mobility", epsilon=0.3):
+    """
+    ε-貪欲プレイアウトを生成する。
+    """
+    from core.evaluation import get_evaluation_function
+    evaluate = get_evaluation_function(evaluation)
+
+    def playout(state, rng, max_steps=1000):
+        s = state
+        steps = 0
+        while not s.is_terminal() and steps < max_steps:
+            moves = s.legal_moves()
+            if rng.random() < epsilon:
+                # 探索: ランダムに打つ
+                s = s.apply_move(rng.choice(moves))
+            else:
+                # 活用: 貪欲に打つ
+                me = s.turn
+                best_val = None
+                best_moves = []
+                for move in moves:
+                    val = evaluate(s.apply_move(move), me)
+                    if best_val is None or val > best_val:
+                        best_val = val
+                        best_moves = [move]
+                    elif val == best_val:
+                        best_moves.append(move)
+                s = s.apply_move(rng.choice(best_moves))
+            steps += 1
+        if s.is_terminal():
+            return s.winner()
+        return 2 if s.turn == 1 else 1
+
+    return playout
+
 
 # MARK: mcts_best_move
 def mcts_best_move(state, time_limit=1.0, c=math.sqrt(2),

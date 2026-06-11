@@ -147,3 +147,45 @@ def test_mcts_agent_runs_with_time():
 
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])
+
+
+# ----------------------------------------------------------------------
+# プレイアウト方策のバリエーション
+# ----------------------------------------------------------------------
+from agents.search_mcts import make_greedy_playout, make_epsilon_greedy_playout
+
+
+def test_greedy_playout_returns_valid_winner():
+    """貪欲プレイアウトも必ず終局し勝者を返す。"""
+    rng = random.Random(0)
+    s = initial_state(5, 5)
+    playout = make_greedy_playout("mobility")
+    for _ in range(10):
+        assert playout(s, rng) in (1, 2)
+
+
+def test_greedy_playout_on_terminal():
+    """終局局面では勝者をそのまま返す。"""
+    around = {(0, 1), (1, 0), (1, 1)}
+    s = make3(around, p1=(0, 0), p2=(2, 2), turn=1)  # winner 2
+    playout = make_greedy_playout("mobility")
+    assert playout(s, random.Random(0)) == 2
+
+
+def test_epsilon_greedy_returns_valid_winner():
+    """ε-貪欲プレイアウトも必ず終局し勝者を返す。"""
+    rng = random.Random(0)
+    s = initial_state(5, 5)
+    playout = make_epsilon_greedy_playout("mobility", epsilon=0.3)
+    for _ in range(10):
+        assert playout(s, rng) in (1, 2)
+
+
+def test_mcts_with_greedy_playout_finds_win():
+    """貪欲プレイアウトを使っても1手詰みを見つける。"""
+    s = make3({(0, 1), (1, 1)}, p1=(2, 0), p2=(0, 2), turn=1)
+    playout = make_greedy_playout("mobility")
+    move, _ = mcts_best_move(s, time_limit=None, max_iters=1000,
+                             playout=playout, rng=random.Random(0))
+    after = s.apply_move(move)
+    assert after.is_terminal() and after.winner() == 1
