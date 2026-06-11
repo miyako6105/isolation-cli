@@ -168,9 +168,11 @@ def initial_state(width: int, height: int, p1: tuple[int, int]=None, p2: tuple[i
         turn (int): 最初の手番（1または2）
     """
     if p1 is None:
-        p1 = (0, 0) # デフォルトは左上隅
+        # p1の初期座標
+        p1 = (0, width//2 - 1) # デフォルトは左上隅
     if p2 is None:
-        p2 = (height - 1, width - 1) # デフォルトは右下隅
+        # p2の初期座標
+        p2 = (height - 1, width//2 + 1) # デフォルトは右下隅
     # 初期配置が適切かチェック
     if not (0 <= p1[0] < height and 0 <= p1[1] < width):
         raise ValueError("プレイヤー1の初期位置が盤面の範囲外です")
