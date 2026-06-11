@@ -7,6 +7,7 @@ from agents.simple import RandomAgent, GreedyAgent
 from agents.minimax_agent import MinimaxAgent
 from agents.alphabeta_agent import AlphaBetaAgent
 from agents.iterative_agent import IterativeDeepeningAgent
+from agents.mcts_agent import MCTSAgent
 
 # MARK: CPU_CHOICES
 # CPUエージェントの選択肢。コマンドライン引数や対話的な選択で使用する。
@@ -15,7 +16,8 @@ CPU_CHOICES = [
     "random", "greedy-mobility", "greedy-reachable", "greedy-voronoi", # 貪欲エージェントの選択肢
     "minimax-mobility", "minimax-reachable", "minimax-voronoi", # ミニマックスエージェントの選択肢
     "alphabeta-mobility", "alphabeta-reachable", "alphabeta-voronoi",# アルファベータエージェントの選択肢
-    "iterative-mobility", "iterative-reachable", "iterative-voronoi" # 反復深化エージェントの選択肢
+    "iterative-mobility", "iterative-reachable", "iterative-voronoi", # 反復深化エージェントの選択肢
+    "mcts" # MCTSエージェント
 ] 
 
 # MARK: build CPU
@@ -40,6 +42,8 @@ def build_cpu(kind: str, seed=None):
     elif kind.startswith("iterative-"): # 反復深化エージェント
         eval_fn = kind.split("-", 1)[1]
         return IterativeDeepeningAgent(name=f"CPU-Iterative-{eval_fn}", time_limit=1.0, evaluation=eval_fn, seed=seed)
+    elif kind == "mcts": # MCTSエージェント
+        return MCTSAgent(name="CPU-MCTS", time_limit=1.0, seed=seed)
     else:
         raise ValueError(f"不明なエージェントの種類: {kind}")
 
