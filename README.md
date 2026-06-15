@@ -10,13 +10,7 @@ isolation-cli/
 │   └── game.py                 # ゲーム進行の制御
 ├── agents/
 │   ├── base.py                 # 全エージェントが従う抽象基底クラス
-|   ├── simple.py               # 単純な評価によるエージェント
-|   ├── search_minimax.py       # MiniMax法の探索処理
-|   ├── minimax_agent.py        # MiniMax法によるエージェント
-|   ├── search_alphabeta.py     # αβ探索の処理
-|   ├── alphabeta_agent.py      # αβ探索によるエージェント
-|   ├── search_iterative.py     # 反復深化による評価スクリプト
-|   ├── iterative_agent.py      # 反復深化によるエージェント
+|   ├── *-agent.py              # 各評価によるエージェント
 │   └── human.py                # 人間(player)
 ├── cli/
 │   └── play.py                 # CLIアプリ本体
