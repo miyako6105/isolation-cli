@@ -50,12 +50,6 @@ python -m cli.play
 
 ### 選択可能なCPUの制御方法
 - random（完全ランダム）
-- greedy-mobility（1手で移動可能なマスの数差を評価値とする）
-- greedy-reachable（現時点のマスから到達可能な全てのマスの数の差を評価値とする）
-- greedy-voronoi（ボロノイ分割で近いマスの数の差を評価値とする）
-- minimax-*（minimax法による探索）
-- alphabeta-*（αβ法による探索）
-- iterative-*（反復深化による探索）
 
 ## 対戦シミュレーション
 各エージェントを戦わせ、強いエージェントを決めることができます。スクリプトは "eval/run_demo.py" と "eval/run_search.py" で、run_demo.py では総当たり戦で勝率を競います。run_search.py は、最強のエージェントを決める、所謂「天下一武道会」みたいな感じです。
