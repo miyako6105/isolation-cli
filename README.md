@@ -69,11 +69,11 @@ python -m cli.play
 ### 実行方法
 - run_demo.py
 ```
-python -m eval/run_demo.py
+python -m eval.run_demo
 ```
 - run_search.py
 ```
-python -m eval/run_search.py
+python -m eval.run_search
 ```
 ## エージェントの追加方法
 本リポジトリにおいて、エージェントは満たすべき基底クラス（"agents/base.py" の Agents クラス）に従っていれば、独自のエージェントを対戦用CPUに組み込むことができます。
