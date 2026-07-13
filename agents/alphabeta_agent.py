@@ -2,6 +2,7 @@ import random
 from agents.base import Agent
 from agents.search_alphabeta import alphabeta_best_move
 from core.evaluation import get_evaluation_function
+
 class AlphaBetaAgent(Agent):
     """
     固定深さのアルファ・ベータ探索で手を選ぶエージェント

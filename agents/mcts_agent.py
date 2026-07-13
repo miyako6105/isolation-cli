@@ -13,7 +13,7 @@ class MCTSAgent(Agent):
         playout   : プレイアウト方策(既定は一様ランダム)。差し替え可能。
     """
 
-    def __init__(self, name=None, time_limit=1.0, c=math.sqrt(2),
+    def __init__(self, name=None, time_limit=10.0, c=math.sqrt(2),
                  playout=random_playout, seed=None):
         super().__init__(name or f"MCTS(t={time_limit}s)")
         self.time_limit = time_limit

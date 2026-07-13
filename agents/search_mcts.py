@@ -177,7 +177,7 @@ def make_epsilon_greedy_playout(evaluation="mobility", epsilon=0.3):
 
 
 # MARK: mcts_best_move
-def mcts_best_move(state, time_limit=1.0, c=math.sqrt(2),
+def mcts_best_move(state, time_limit=5.0, c=math.sqrt(2),
                    playout=random_playout, rng=None, max_iters=None):
     """
     MCTS で最善手を返す。

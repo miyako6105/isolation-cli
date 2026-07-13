@@ -13,15 +13,15 @@ register("mcts-greedy", lambda s: MCTSAgent(name="mcts-greedy", time_limit=0.3,
 register("mcts-eps0.3", lambda s: MCTSAgent(name="mcts-eps0.3", time_limit=0.3,
                                             playout=make_epsilon_greedy_playout("mobility", 0.3), seed=s))
 
-res = run_tournament(n_games=12, width=7, height=7, base_seed=0)
+res = run_tournament(n_games=12, width=5, height=5, base_seed=0)
 print(format_ranking(res))
 print()
 print(format_win_matrix(res))
 
 # 各エージェントの平均試行回数も覗く(1手だけサンプリング)
 print()
-print("=== 参考: 0.3秒での試行回数(7x7初期, 1手) ===")
-s0 = initial_state(7, 7)
+print("=== 参考: 0.3秒での試行回数(5x5初期, 1手) ===")
+s0 = initial_state(5, 5)
 for name in ["mcts-random", "mcts-greedy", "mcts-eps0.3"]:
     ag = AGENT_REGISTRY[name](0)
     ag.select_move(s0)
